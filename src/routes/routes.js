@@ -4,12 +4,6 @@ const postsRouter = require('./posts.routes');
 
 const router = Router();
 
-router.get('/status', (req, res) => {
-	return res.status(200).json({
-		message: 'MiniBlog API ready',
-	});
-});
-
 router.use('/authors', authorsRouter);
 router.use('/posts', postsRouter);
 
