@@ -154,6 +154,29 @@ ProyectoM2_RaulAlejandroCarmonaCuellar/
 
 - Un autor puede tener muchas publicaciones.
 - `posts.author_id` referencia `authors.id`.
+
+## Librerías instaladas
+
+- `express`: crea el servidor HTTP, define rutas y responde a las peticiones.
+- `pg`: conecta la aplicación con PostgreSQL y ejecuta consultas SQL.
+- `dotenv`: carga las variables de entorno desde el archivo `.env`.
+- `swagger-ui-express`: muestra la documentación OpenAPI en el navegador.
+- `yaml`: lee y convierte el archivo `openapi.yaml` a un formato que Swagger pueda usar.
+- `supertest`: permite probar los endpoints automáticamente sin abrir Postman.
+
+## Qué se ignora en `.gitignore`
+
+El archivo `.gitignore` evita subir archivos generados, locales o sensibles al repositorio.
+
+- `node_modules/`: no se sube porque contiene dependencias instaladas por npm y puede regenerarse con `npm install`.
+- `.env`: no se sube porque puede contener credenciales y datos sensibles como `DATABASE_URL` o claves privadas.
+- `coverage/`: no se sube porque es un resultado generado por pruebas y puede volver a crearse cuando se ejecute la suite.
+- `dist/` y `build/`: no se suben porque suelen ser carpetas de salida generadas por un proceso de compilación o despliegue.
+- `.DS_Store`: no se sube porque es un archivo oculto de macOS que no aporta valor al proyecto.
+- `package-lock.json`: en este proyecto quedó excluido por configuración actual; normalmente se usa para fijar versiones, pero si el repositorio ya está organizado así se respeta esa decisión.
+
+La idea de mantener esos elementos fuera del repositorio es evitar ruido, reducir peso y no exponer información privada.
+
 ## Variables de entorno
 
 ```env
@@ -208,27 +231,27 @@ Si la base remota está vacía, la aplicación ejecuta automáticamente `setup.s
 
 ## Registro de uso de IA
 
-### Prompt 1
+### Agent 1
 
-**Prompt:** “Mi README está desordenado. Quiero una versión más clara, parecida a un README de proyecto bien presentado, pero adaptada a mi API MiniBlog.”
+**Prompt:** Necesito reorganizar mi README como si fuera un entregable final. Quiero que quede claro qué hace la API, cómo se instala, cómo se prueba y cómo se despliega en Railway.
 
-**Respuesta resumida:** Reorganicé el documento por bloques: descripción, stack técnico, instalación local, endpoints, despliegue, documentación y uso de IA. También agregué enlaces directos a la API y a Swagger en Railway.
+**Respuesta resumida:** Reorganicé el documento por secciones más limpias y directas: descripción, stack técnico, instalación, uso local, deploy, documentación y registro de IA. También dejé enlaces visibles a la API pública y al Swagger de Railway.
 
-### Prompt 2
+### Chat 2
 
-**Prompt:** “No entiendo bien cómo clonar el repositorio ni cómo correr el proyecto si soy nuevo.”
+**Prompt:** No entiendo bien cómo clonar el repositorio ni qué comandos tengo que ejecutar para levantarlo desde cero. ¿Me lo explicas paso a paso?
 
-**Respuesta resumida:** Incluí los comandos exactos para clonar, instalar dependencias, configurar `.env`, ejecutar `setup.sql`/`seed.sql` y levantar el servidor con `npm start`.
+**Respuesta resumida:** Agregué una guía inicial con comandos reales para clonar, instalar dependencias, crear el `.env`, correr `setup.sql` y `seed.sql`, y levantar el servidor con `npm start`.
 
-### Prompt 3
+### Agent 3
 
-**Prompt:** “En Railway me funciona la API pero Swagger no muestra bien el server y la base se ve vacía.”
+**Prompt:** Detecté que en Railway Swagger no estaba mostrando bien el server y que la base parecía vacía. Quiero que el proyecto local y el deploy funcionen con la misma lógica.
 
-**Respuesta resumida:** Detecté que el problema era la conexión y el arranque de la base. Se agregó soporte para `DATABASE_URL`, se configuró `PUBLIC_URL` para Swagger y se automatizó la carga de tablas y seed al iniciar si la base está vacía.
+**Respuesta resumida:** Ajusté la conexión para soportar `DATABASE_URL`, añadí `PUBLIC_URL` para que Swagger muestre la URL correcta y dejé un arranque automático que crea y carga datos cuando la base remota está vacía.
 
-### Prompt 4
+### Chat 4
 
-**Prompt:** “Quiero que el README incluya ejemplos de prompts que pude haber usado y tus respuestas, como registro de IA.”
+**Prompt:** Quiero que el README tenga ejemplos de prompts que suenen naturales, como si los hubiera ido pidiendo durante el desarrollo, y que respondan en un estilo claro.
 
-**Respuesta resumida:** Dejé una sección de registro de IA con prompts plausibles del desarrollo, explicando qué se hizo y por qué, para que el README refleje el proceso real del proyecto.
+**Respuesta resumida:** Dejé ejemplos más naturales y mezclados entre modo agente y modo chat para que el registro se vea más realista y útil como evidencia del proceso de trabajo.
 Proyecto desarrollado como MiniBlog para el Proyecto Integrador Backend.
