@@ -1,4 +1,6 @@
 const { Pool } = require('pg');
+const fs = require('node:fs');
+const path = require('node:path');
 
 require('dotenv').config();
 
@@ -38,7 +40,30 @@ async function checkDatabaseConnection() {
 	}
 }
 
+async function runSqlFile(filePath) {
+	const sql = fs.readFileSync(filePath, 'utf8');
+	await pool.query(sql);
+}
+
+async function initializeDatabase() {
+	const authorsTableResult = await pool.query("SELECT to_regclass('public.authors') AS authors_table");
+	const authorsTableExists = Boolean(authorsTableResult.rows[0]?.authors_table);
+
+	if (!authorsTableExists) {
+		await runSqlFile(path.join(__dirname, '..', '..', 'setup.sql'));
+	}
+
+	const authorsCountResult = await pool.query('SELECT COUNT(*)::int AS count FROM authors');
+
+	if (authorsCountResult.rows[0]?.count === 0) {
+		await runSqlFile(path.join(__dirname, '..', '..', 'seed.sql'));
+	}
+
+	return true;
+}
+
 module.exports = {
 	pool,
 	checkDatabaseConnection,
+	initializeDatabase,
 };
