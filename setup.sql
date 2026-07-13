@@ -11,4 +11,20 @@ CREATE TABLE authors (
 	created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW()
 );
 
+CREATE TABLE posts (
+	id SERIAL PRIMARY KEY,
+	title VARCHAR(150) NOT NULL,
+	content TEXT NOT NULL,
+	author_id INTEGER NOT NULL,
+	published BOOLEAN NOT NULL DEFAULT FALSE,
+	created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW(),
+	CONSTRAINT fk_posts_author
+		FOREIGN KEY (author_id)
+		REFERENCES authors (id)
+		ON UPDATE CASCADE
+		ON DELETE CASCADE
+);
+
+CREATE INDEX idx_posts_author_id ON posts (author_id);
+
 COMMIT;
