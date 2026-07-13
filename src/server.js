@@ -14,6 +14,17 @@ const openApiDocument = JSON.parse(
 	)
 );
 
+// Ajusta el campo servers.url de Swagger según el entorno
+// - Railway: define BASE_URL
+// - Local: fallback a http://localhost:${PORT || 3000}
+const port = process.env.PORT || 3000;
+const baseUrl = process.env.BASE_URL || `http://localhost:${port}`;
+if (openApiDocument?.servers?.length) {
+	openApiDocument.servers[0].url = baseUrl;
+} else {
+	openApiDocument.servers = [{ url: baseUrl }];
+}
+
 app.use(express.json());
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(openApiDocument));
