@@ -37,8 +37,43 @@ async function getPostsByAuthorId(authorId) {
 	return result.rows;
 }
 
+async function createPost(data) {
+	const query = `
+		INSERT INTO posts (title, content, author_id, published)
+		VALUES ($1, $2, $3, $4)
+		RETURNING id, title, content, author_id, published, created_at
+	`;
+	const values = [data.title, data.content, data.author_id, Boolean(data.published)];
+	const result = await pool.query(query, values);
+	return result.rows[0];
+}
+
+async function updatePost(id, data) {
+	const query = `
+		UPDATE posts
+		SET title = $1,
+			content = $2,
+			author_id = $3,
+			published = $4
+		WHERE id = $5
+		RETURNING id, title, content, author_id, published, created_at
+	`;
+	const values = [data.title, data.content, data.author_id, Boolean(data.published), id];
+	const result = await pool.query(query, values);
+	return result.rows[0] || null;
+}
+
+async function deletePost(id) {
+	const query = 'DELETE FROM posts WHERE id = $1 RETURNING id';
+	const result = await pool.query(query, [id]);
+	return result.rowCount > 0;
+}
+
 module.exports = {
 	getAllPosts,
 	getPostById,
 	getPostsByAuthorId,
+	createPost,
+	updatePost,
+	deletePost,
 };
