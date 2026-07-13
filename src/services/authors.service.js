@@ -49,6 +49,17 @@ async function deleteAuthor(id) {
 	return result.rowCount > 0;
 }
 
+async function getAuthorPosts(authorId) {
+	const query = `
+		SELECT id, title, content, author_id, published, created_at
+		FROM posts
+		WHERE author_id = $1
+		ORDER BY id ASC
+	`;
+	const result = await pool.query(query, [authorId]);
+	return result.rows;
+}
+
 module.exports = {
 	getAllAuthors,
 	getAuthorById,
@@ -56,4 +67,5 @@ module.exports = {
 	createAuthor,
 	updateAuthor,
 	deleteAuthor,
+	getAuthorPosts,
 };

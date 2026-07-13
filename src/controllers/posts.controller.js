@@ -16,17 +16,6 @@ async function getPost(req, res) {
 	return res.status(200).json(post);
 }
 
-async function getPostsByAuthor(req, res) {
-	const authorId = Number(req.params.authorId);
-	const author = await authorsService.getAuthorById(authorId);
-
-	if (!author) {
-		return res.status(404).json({ message: 'Autor no encontrado' });
-	}
-
-	return res.status(200).json(await postsService.getPostsByAuthorId(authorId));
-}
-
 async function createPost(req, res) {
 	const { title, content, author_id, published } = req.body;
 
@@ -86,7 +75,6 @@ async function deletePost(req, res) {
 module.exports = {
 	getPosts,
 	getPost,
-	getPostsByAuthor,
 	createPost,
 	updatePost,
 	deletePost,

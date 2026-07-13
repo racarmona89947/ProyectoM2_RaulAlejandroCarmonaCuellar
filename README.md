@@ -257,3 +257,160 @@ npm test
 5. Levantá la API con `npm start` o `npm run dev`.
 
 ### Verificación rápida
+
+- `GET /` responde con el mensaje de estado de la API.
+- `GET /health` responde con `{"status":"ok"}`.
+
+## Documentación OpenAPI
+
+El archivo `openapi.yaml` describe los endpoints y esquemas de la API.
+
+Si querés visualizarlo con Swagger UI, podés abrir `http://localhost:3000/docs/`.
+
+## Cómo probar
+
+### Con Postman o Insomnia
+
+Podés probar los endpoints principales enviando requests JSON a:
+
+- `http://localhost:3000/authors`
+- `http://localhost:3000/posts`
+
+### Con curl
+
+```bash
+curl http://localhost:3000/health
+```
+
+## Testing
+
+Las pruebas mínimas están en `test/app.test.js` y cubren:
+
+- `GET /`
+- `GET /health`
+- `GET /unknown-route`
+- validaciones de autores y publicaciones;
+- CRUD básico contra PostgreSQL para autores y publicaciones;
+- eliminación de una publicación inexistente.
+
+Ejecutar pruebas:
+
+```bash
+npm test
+```
+
+## Documentación OpenAPI
+
+El contrato de la API está definido en `openapi.yaml` y también puede verse en el navegador desde `/docs` usando Swagger UI.
+
+Incluye:
+
+- Paths.
+- Schemas.
+- Request bodies.
+- Respuestas estándar.
+
+Para abrir la documentación en local:
+
+- `http://localhost:3000/docs`
+
+## Despliegue en Railway
+
+Railway es una buena opción para publicar esta API porque permite definir variables de entorno, conectar una base de datos PostgreSQL administrada y ejecutar el proyecto con el script `start` sin agregar infraestructura extra.
+
+### Preparación antes del deploy
+
+1. Confirmá que `npm start` funciona localmente.
+2. Verificá que `setup.sql` y `seed.sql` se hayan ejecutado en la base de datos que vas a usar en producción.
+3. Asegurate de no subir el archivo `.env`.
+4. Usá `.env.example` como plantilla para crear las variables en Railway.
+
+### Configuración en Railway
+
+En el proyecto de Railway definí estas variables:
+
+- `PORT`
+- `DB_HOST`
+- `DB_PORT`
+- `DB_NAME`
+- `DB_USER`
+- `DB_PASSWORD`
+
+Railway asigna el puerto automáticamente en muchos casos, por eso la app usa `process.env.PORT || 3000`.
+
+### Comandos de deploy
+
+- Build command: no requiere comando especial.
+- Start command: `npm start`
+
+Si Railway detecta el proyecto como Node.js, puede usar el `start` script del `package.json` de forma automática.
+
+### Flujo recomendado de despliegue
+
+1. Subí el repositorio a GitHub.
+2. Creá un proyecto nuevo en Railway.
+3. Conectá el repositorio.
+4. Configurá las variables de entorno.
+5. Desplegá la aplicación.
+6. Probá los endpoints de salud y de lectura.
+7. Verificá la conexión a PostgreSQL.
+
+### Pruebas luego del deploy
+
+- `GET /` debe responder el mensaje de estado.
+- `GET /health` debe responder `{"status":"ok"}`.
+- `GET /authors` y `GET /posts` deben devolver colecciones válidas si la base está cargada.
+
+### URLs de referencia
+
+- Internal URL: la URL privada que Railway asigna al servicio dentro de su red.
+- Public URL: la URL pública generada por Railway para consumir la API desde Postman o el frontend.
+
+### Variables de entorno en Railway
+
+Definí las mismas variables que en `.env`:
+
+- `PORT`
+- `DB_HOST`
+- `DB_PORT`
+- `DB_NAME`
+- `DB_USER`
+- `DB_PASSWORD`
+
+### Buenas prácticas para el deploy
+
+- No subir `.env` al repositorio.
+- Usar `process.env.PORT` para el puerto.
+- Verificar que la base de datos esté accesible desde Railway.
+- Correr `setup.sql` y `seed.sql` en la base remota antes de probar la API.
+
+## Uso de IA
+
+Este proyecto puede documentar el uso de IA como apoyo técnico para:
+
+- organizar fases de trabajo;
+- revisar arquitectura;
+- redactar documentación;
+- detectar inconsistencias;
+- proponer mejoras de legibilidad y mantenimiento.
+
+La IA no reemplaza la comprensión del proyecto ni la validación manual de la consigna. Cada fase debe revisarse y probarse antes de avanzar.
+
+## Estado del proyecto
+
+El proyecto está organizado por fases y ya incluye:
+
+- arquitectura base;
+- esquema de base de datos;
+- servidor Express;
+- CRUD completo contra PostgreSQL;
+- conexión a PostgreSQL;
+- consultas SQL parametrizadas;
+- validaciones;
+- manejo global de errores;
+- pruebas mínimas;
+- documentación OpenAPI.
+
+## Autor
+
+Proyecto desarrollado como MiniBlog para el Proyecto Integrador Backend.

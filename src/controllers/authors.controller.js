@@ -60,10 +60,23 @@ async function deleteAuthor(req, res) {
 	return res.status(204).send();
 }
 
+async function getAuthorPosts(req, res) {
+	const authorId = Number(req.params.id);
+	const author = await authorsService.getAuthorById(authorId);
+
+	if (!author) {
+		return res.status(404).json({ message: 'Autor no encontrado' });
+	}
+
+	const posts = await authorsService.getAuthorPosts(authorId);
+	return res.status(200).json(posts);
+}
+
 module.exports = {
 	getAuthors,
 	getAuthor,
 	createAuthor,
 	updateAuthor,
 	deleteAuthor,
+	getAuthorPosts,
 };
