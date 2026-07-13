@@ -210,6 +210,7 @@ Crear un archivo `.env` con estas variables:
 
 ```env
 PORT=3000
+DATABASE_URL=postgresql://user:password@host:5432/dbname
 DB_HOST=localhost
 DB_PORT=5432
 DB_NAME=miniblog
@@ -327,9 +328,13 @@ Railway es una buena opción para publicar esta API porque permite definir varia
 
 ### Configuración en Railway
 
-En el proyecto de Railway definí estas variables:
+En el proyecto de Railway definí esta variable principal:
 
 - `PORT`
+- `DATABASE_URL`
+
+Si preferís mantener la configuración clásica para desarrollo local, también podés usar:
+
 - `DB_HOST`
 - `DB_PORT`
 - `DB_NAME`
@@ -368,9 +373,10 @@ Si Railway detecta el proyecto como Node.js, puede usar el `start` script del `p
 
 ### Variables de entorno en Railway
 
-Definí las mismas variables que en `.env`:
+Definí `DATABASE_URL` en Railway o, en local, las variables individuales de PostgreSQL:
 
 - `PORT`
+- `DATABASE_URL`
 - `DB_HOST`
 - `DB_PORT`
 - `DB_NAME`

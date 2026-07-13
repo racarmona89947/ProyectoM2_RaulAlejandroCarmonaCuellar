@@ -14,15 +14,14 @@ const openApiDocument = JSON.parse(
 	)
 );
 
-// Ajusta el campo servers.url de Swagger según el entorno
-// - Railway: define BASE_URL
-// - Local: fallback a http://localhost:${PORT || 3000}
-const port = process.env.PORT || 3000;
-const baseUrl = process.env.BASE_URL || `http://localhost:${port}`;
-if (openApiDocument?.servers?.length) {
-	openApiDocument.servers[0].url = baseUrl;
-} else {
-	openApiDocument.servers = [{ url: baseUrl }];
+// Permite sobrescribir el server de Swagger cuando Railway expone una URL pública.
+// Si no existe BASE_URL, se conserva el server relativo definido en openapi.yaml.
+if (process.env.BASE_URL) {
+	if (openApiDocument?.servers?.length) {
+		openApiDocument.servers[0].url = process.env.BASE_URL;
+	} else {
+		openApiDocument.servers = [{ url: process.env.BASE_URL }];
+	}
 }
 
 app.use(express.json());
