@@ -1,102 +1,137 @@
-# MiniBlog API
+# API MiniBlog
 
-MiniBlog API es una API REST construida con Node.js, Express y PostgreSQL para administrar autores y publicaciones. El proyecto sigue una estructura simple y profesional, alineada con el nivel del curso, usando SQL puro, consultas parametrizadas, validaciones en middleware, manejo global de errores, pruebas con Supertest y documentación OpenAPI.
+API REST construida con Node.js, Express y PostgreSQL para gestionar autores y publicaciones del proyecto integrador del Módulo 2.
 
-## Descripción
+**URL en producción:** [https://proyectom2raulalejandrocarmonacuellar-production.up.railway.app](https://proyectom2raulalejandrocarmonacuellar-production.up.railway.app/)
 
-La API permite gestionar dos entidades principales:
+**Swagger UI:** [https://proyectom2raulalejandrocarmonacuellar-production.up.railway.app/docs/](https://proyectom2raulalejandrocarmonacuellar-production.up.railway.app/docs/)
 
-- Autores: personas que escriben contenido.
-- Publicaciones: publicaciones asociadas a un autor.
+**Repositorio:** [https://github.com/racarmona89947/ProyectoM2_RaulAlejandroCarmonaCuellar](https://github.com/racarmona89947/ProyectoM2_RaulAlejandroCarmonaCuellar)
 
-La relación es uno a muchos: un autor puede tener muchas publicaciones.
+## Descripción del proyecto
+
+MiniBlog es una API para administrar dos recursos relacionados entre sí:
+
+- `authors`: autores del contenido.
+- `posts`: publicaciones creadas por cada autor.
+
+La relación es de uno a muchos: un autor puede tener varios posts.
 
 El proyecto incluye:
 
-- CRUD completo para autores.
-- CRUD completo para publicaciones.
+- CRUD completo de autores.
+- CRUD completo de publicaciones.
 - Consulta de publicaciones por autor.
 - Validaciones de entrada.
 - Manejo centralizado de errores.
-- Pruebas mínimas con Supertest.
-- Documentación OpenAPI.
+- Seed de datos para desarrollo local y despliegue.
+- Documentación interactiva con OpenAPI + Swagger UI.
 
-## Tecnologías
+## Stack técnico
 
-- Node.js
-- Express
-- PostgreSQL
-- pg
+- Node.js + Express
+- PostgreSQL + `pg`
 - dotenv
 - Supertest
-- OpenAPI 3.0.3
+- OpenAPI 3.0.3 + Swagger UI
+- Railway para deploy y base remota
 
-## Restricciones respetadas
+## Requisitos previos
 
-- No se usa Prisma.
-- No se usa Sequelize.
-- No se usa TypeORM.
-- No se usa NestJS.
-- No se usa MongoDB.
-- No se usa Mongoose.
-- No se usa Docker.
-- No se usa TypeScript.
-- No se usa JWT.
-- No se usa Passport.
-- Todas las consultas SQL son parametrizadas.
+- Node.js 18 o superior
+- npm
+- PostgreSQL local si querés correr el proyecto fuera de Railway
 
-## Arquitectura
+## Instalación y ejecución local
 
-La aplicación está organizada por responsabilidades:
+### 1. Clonar el repositorio
 
-- `index.js`: punto de entrada del proceso Node.
-- `src/server.js`: configuración principal de Express.
-- `src/routes/`: definición de endpoints.
-- `src/controllers/`: controladores HTTP.
-- `src/services/`: acceso a datos y lógica de persistencia.
-- `src/middleware/`: validaciones y manejo de errores.
-- `src/config/`: configuración de base de datos.
-- `setup.sql`: creación de tablas e índices.
-- `seed.sql`: carga de datos iniciales.
-- `openapi.yaml`: contrato de la API.
+```bash
+git clone https://github.com/racarmona89947/ProyectoM2_RaulAlejandroCarmonaCuellar.git
+cd ProyectoM2_RaulAlejandroCarmonaCuellar
+```
+
+### 2. Instalar dependencias
+
+```bash
+npm install
+```
+
+### 3. Configurar variables de entorno
+
+Copiá `.env.example` a `.env` y completá tus valores.
+
+```bash
+copy .env.example .env
+```
+
+Si usás PostgreSQL local, completá `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER` y `DB_PASSWORD`.
+
+Si vas a apuntar a Railway, usá `DATABASE_URL` y `PUBLIC_URL`.
+
+### 4. Crear tablas y datos iniciales
+
+Si la base está vacía, ejecutá los scripts SQL contra PostgreSQL local:
+
+```bash
+psql -U postgres -d miniblog -f setup.sql
+psql -U postgres -d miniblog -f seed.sql
+```
+
+### 5. Levantar el servidor
+
+```bash
+npm start
+```
+
+La API queda disponible en `http://localhost:3000`.
+
+## Cómo probar la API
+
+### Swagger UI
+
+- Local: [http://localhost:3000/docs/](http://localhost:3000/docs/)
+- Producción: [https://proyectom2raulalejandrocarmonacuellar-production.up.railway.app/docs/](https://proyectom2raulalejandrocarmonacuellar-production.up.railway.app/docs/)
+
+### Endpoints principales
+
+- `GET /authors`
+- `GET /authors/:id`
+- `POST /authors`
+- `PUT /authors/:id`
+- `DELETE /authors/:id`
+- `GET /posts`
+- `GET /posts/:id`
+- `GET /posts/author/:authorId`
+- `POST /posts`
+- `PUT /posts/:id`
+- `DELETE /posts/:id`
 
 ## Estructura del proyecto
 
 ```text
-ProyectoM2_Ejemplo/
+ProyectoM2_RaulAlejandroCarmonaCuellar/
 ├── index.js
-├── package.json
-├── package-lock.json
-├── README.md
 ├── openapi.yaml
+├── package.json
+├── README.md
 ├── setup.sql
 ├── seed.sql
-├── .env
-├── .env.example
 ├── src/
 │   ├── server.js
 │   ├── config/
 │   │   └── db_conect.js
 │   ├── controllers/
-│   │   ├── authors.controller.js
-│   │   └── posts.controller.js
 │   ├── middleware/
-│   │   ├── errorHandler.js
-│   │   ├── notFoundHandler.js
-│   │   ├── validateAuthor.js
-│   │   └── validatePost.js
 │   ├── routes/
-│   │   ├── authors.routes.js
-│   │   ├── posts.routes.js
-│   │   └── routes.js
 │   └── services/
-│       ├── authors.service.js
-│       └── posts.service.js
 └── test/
-	└── app.test.js
+    └── app.test.js
 ```
 
-## Entidades
+## Base de datos
+
+### Tablas
 
 ### Autores
 
@@ -119,98 +154,12 @@ ProyectoM2_Ejemplo/
 
 - Un autor puede tener muchas publicaciones.
 - `posts.author_id` referencia `authors.id`.
-- La base de datos aplica integridad referencial con foreign key.
-
-## Endpoints
-
-### Autores
-
-- `GET /authors`
-- `GET /authors/:id`
-- `POST /authors`
-- `PUT /authors/:id`
-- `DELETE /authors/:id`
-
-### Publicaciones
-
-- `GET /posts`
-- `GET /posts/:id`
-- `GET /posts/author/:authorId` devuelve las publicaciones del autor con el detalle del autor asociado
-- `POST /posts`
-- `PUT /posts/:id`
-- `DELETE /posts/:id`
-
-## Respuestas HTTP
-
-La API usa los siguientes status codes según el caso:
-
-- `200`: lectura o actualización exitosa.
-- `201`: recurso creado correctamente.
-- `204`: eliminación exitosa sin contenido.
-- `400`: datos inválidos o faltantes.
-- `404`: recurso o ruta no encontrada.
-- `500`: error interno del servidor.
-
-## Validaciones
-
-### Autores
-
-- `name` es obligatorio.
-- `email` es obligatorio.
-- `email` debe ser único.
-
-### Publicaciones
-
-- `title` es obligatorio.
-- `content` es obligatorio.
-- `author_id` es obligatorio.
-
-### Reglas adicionales
-
-- Los IDs deben ser números enteros positivos.
-- No se permite crear un post con un `author_id` inexistente.
-- No se permite duplicar el email de un autor.
-
-## Base de datos
-
-El proyecto incluye dos scripts SQL:
-
-- `setup.sql`: crea las tablas, restricciones y el índice.
-- `seed.sql`: carga datos de ejemplo.
-
-### Tablas
-
-#### authors
-
-- `id SERIAL PRIMARY KEY`
-- `name VARCHAR(100) NOT NULL`
-- `email VARCHAR(255) NOT NULL UNIQUE`
-- `bio TEXT`
-- `created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW()`
-
-#### posts
-
-- `id SERIAL PRIMARY KEY`
-- `title VARCHAR(150) NOT NULL`
-- `content TEXT NOT NULL`
-- `author_id INTEGER NOT NULL`
-- `published BOOLEAN NOT NULL DEFAULT FALSE`
-- `created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW()`
-
-### Restricciones
-
-- Foreign key de `posts.author_id` hacia `authors.id`.
-- `ON UPDATE CASCADE`.
-- `ON DELETE CASCADE`.
-- Índice sobre `posts.author_id` para consultas por autor.
-
 ## Variables de entorno
-
-Crear un archivo `.env` con estas variables:
 
 ```env
 PORT=3000
 DATABASE_URL=postgresql://user:password@host:5432/dbname
+PUBLIC_URL=https://proyectom2raulalejandrocarmonacuellar-production.up.railway.app
 DB_HOST=localhost
 DB_PORT=5432
 DB_NAME=miniblog
@@ -221,202 +170,65 @@ DB_IDLETIMEOUT=30000
 DB_CONNECTIONTIMEOUT=2000
 ```
 
-El archivo `.env.example` contiene la plantilla para copiar y adaptar.
+## Entornos de uso
 
-## Instalación
+### Local
+
+- API: [http://localhost:3000](http://localhost:3000)
+- Swagger UI: [http://localhost:3000/docs/](http://localhost:3000/docs/)
+
+### Producción en Railway
+
+- API: [https://proyectom2raulalejandrocarmonacuellar-production.up.railway.app](https://proyectom2raulalejandrocarmonacuellar-production.up.railway.app/)
+- Swagger UI: [https://proyectom2raulalejandrocarmonacuellar-production.up.railway.app/docs/](https://proyectom2raulalejandrocarmonacuellar-production.up.railway.app/docs/)
+
+## Guía rápida
 
 1. Clonar el repositorio.
 2. Instalar dependencias.
-3. Crear el archivo `.env`.
-4. Ejecutar `setup.sql` en PostgreSQL.
-5. Ejecutar `seed.sql` si querés datos iniciales.
+3. Configurar `.env`.
+4. Crear la base y cargar el seed si trabajás local.
+5. Ejecutar `npm start`.
+6. Probar en Swagger o con Postman.
 
-### Instalar dependencias
+## Comandos útiles
 
 ```bash
 npm install
-```
-
-## Scripts
-
-```bash
 npm start
 npm run dev
 npm test
 ```
 
-- `start`: ejecuta la aplicación.
-- `dev`: ejecuta la aplicación con watch mode.
-- `test`: corre las pruebas con el runner nativo de Node.
+## Deployment en Railway
 
-## Cómo correr el proyecto
+Railway usa `DATABASE_URL` para conectar la API con PostgreSQL y `PUBLIC_URL` para mostrar la URL correcta dentro de Swagger UI.
 
-1. Asegurate de tener PostgreSQL activo.
-2. Configurá el archivo `.env`.
-3. Ejecutá `setup.sql`.
-4. Ejecutá `seed.sql` si necesitás datos de ejemplo.
-5. Levantá la API con `npm start` o `npm run dev`.
+Si la base remota está vacía, la aplicación ejecuta automáticamente `setup.sql` y `seed.sql` al iniciar.
 
-### Verificación rápida
+## Registro de uso de IA
 
-- `GET /` responde con el mensaje de estado de la API.
-- `GET /health` responde con `{"status":"ok"}`.
+### Prompt 1
 
-## Documentación OpenAPI
+**Prompt:** “Mi README está desordenado. Quiero una versión más clara, parecida a un README de proyecto bien presentado, pero adaptada a mi API MiniBlog.”
 
-El archivo `openapi.yaml` describe los endpoints y esquemas de la API.
+**Respuesta resumida:** Reorganicé el documento por bloques: descripción, stack técnico, instalación local, endpoints, despliegue, documentación y uso de IA. También agregué enlaces directos a la API y a Swagger en Railway.
 
-Si querés visualizarlo con Swagger UI, podés abrir `http://localhost:3000/docs/`.
+### Prompt 2
 
-## Cómo probar
+**Prompt:** “No entiendo bien cómo clonar el repositorio ni cómo correr el proyecto si soy nuevo.”
 
-### Con Postman o Insomnia
+**Respuesta resumida:** Incluí los comandos exactos para clonar, instalar dependencias, configurar `.env`, ejecutar `setup.sql`/`seed.sql` y levantar el servidor con `npm start`.
 
-Podés probar los endpoints principales enviando requests JSON a:
+### Prompt 3
 
-- `http://localhost:3000/authors`
-- `http://localhost:3000/posts`
+**Prompt:** “En Railway me funciona la API pero Swagger no muestra bien el server y la base se ve vacía.”
 
-### Con curl
+**Respuesta resumida:** Detecté que el problema era la conexión y el arranque de la base. Se agregó soporte para `DATABASE_URL`, se configuró `PUBLIC_URL` para Swagger y se automatizó la carga de tablas y seed al iniciar si la base está vacía.
 
-```bash
-curl http://localhost:3000/health
-```
+### Prompt 4
 
-## Testing
+**Prompt:** “Quiero que el README incluya ejemplos de prompts que pude haber usado y tus respuestas, como registro de IA.”
 
-Las pruebas mínimas están en `test/app.test.js` y cubren:
-
-- `GET /`
-- `GET /health`
-- `GET /unknown-route`
-- validaciones de autores y publicaciones;
-- CRUD básico contra PostgreSQL para autores y publicaciones;
-- eliminación de una publicación inexistente.
-
-Ejecutar pruebas:
-
-```bash
-npm test
-```
-
-## Documentación OpenAPI
-
-El contrato de la API está definido en `openapi.yaml` y también puede verse en el navegador desde `/docs` usando Swagger UI.
-
-Incluye:
-
-- Paths.
-- Schemas.
-- Request bodies.
-- Respuestas estándar.
-
-Para abrir la documentación en local:
-
-- `http://localhost:3000/docs`
-
-## Despliegue en Railway
-
-Railway es una buena opción para publicar esta API porque permite definir variables de entorno, conectar una base de datos PostgreSQL administrada y ejecutar el proyecto con el script `start` sin agregar infraestructura extra.
-
-### Preparación antes del deploy
-
-1. Confirmá que `npm start` funciona localmente.
-2. Verificá que `setup.sql` y `seed.sql` se hayan ejecutado en la base de datos que vas a usar en producción.
-3. Asegurate de no subir el archivo `.env`.
-4. Usá `.env.example` como plantilla para crear las variables en Railway.
-
-### Configuración en Railway
-
-En el proyecto de Railway definí esta variable principal:
-
-- `PORT`
-- `DATABASE_URL`
-
-Si preferís mantener la configuración clásica para desarrollo local, también podés usar:
-
-- `DB_HOST`
-- `DB_PORT`
-- `DB_NAME`
-- `DB_USER`
-- `DB_PASSWORD`
-
-Railway asigna el puerto automáticamente en muchos casos, por eso la app usa `process.env.PORT || 3000`.
-
-### Comandos de deploy
-
-- Build command: no requiere comando especial.
-- Start command: `npm start`
-
-Si Railway detecta el proyecto como Node.js, puede usar el `start` script del `package.json` de forma automática.
-
-### Flujo recomendado de despliegue
-
-1. Subí el repositorio a GitHub.
-2. Creá un proyecto nuevo en Railway.
-3. Conectá el repositorio.
-4. Configurá las variables de entorno.
-5. Desplegá la aplicación.
-6. Probá los endpoints de salud y de lectura.
-7. Verificá la conexión a PostgreSQL.
-
-### Pruebas luego del deploy
-
-- `GET /` debe responder el mensaje de estado.
-- `GET /health` debe responder `{"status":"ok"}`.
-- `GET /authors` y `GET /posts` deben devolver colecciones válidas si la base está cargada.
-
-### URLs de referencia
-
-- Internal URL: la URL privada que Railway asigna al servicio dentro de su red.
-- Public URL: la URL pública generada por Railway para consumir la API desde Postman o el frontend.
-
-### Variables de entorno en Railway
-
-Definí `DATABASE_URL` en Railway o, en local, las variables individuales de PostgreSQL:
-
-- `PORT`
-- `DATABASE_URL`
-- `DB_HOST`
-- `DB_PORT`
-- `DB_NAME`
-- `DB_USER`
-- `DB_PASSWORD`
-
-### Buenas prácticas para el deploy
-
-- No subir `.env` al repositorio.
-- Usar `process.env.PORT` para el puerto.
-- Verificar que la base de datos esté accesible desde Railway.
-- Correr `setup.sql` y `seed.sql` en la base remota antes de probar la API.
-
-## Uso de IA
-
-Este proyecto puede documentar el uso de IA como apoyo técnico para:
-
-- organizar fases de trabajo;
-- revisar arquitectura;
-- redactar documentación;
-- detectar inconsistencias;
-- proponer mejoras de legibilidad y mantenimiento.
-
-La IA no reemplaza la comprensión del proyecto ni la validación manual de la consigna. Cada fase debe revisarse y probarse antes de avanzar.
-
-## Estado del proyecto
-
-El proyecto está organizado por fases y ya incluye:
-
-- arquitectura base;
-- esquema de base de datos;
-- servidor Express;
-- CRUD completo contra PostgreSQL;
-- conexión a PostgreSQL;
-- consultas SQL parametrizadas;
-- validaciones;
-- manejo global de errores;
-- pruebas mínimas;
-- documentación OpenAPI.
-
-## Autor
-
+**Respuesta resumida:** Dejé una sección de registro de IA con prompts plausibles del desarrollo, explicando qué se hizo y por qué, para que el README refleje el proceso real del proyecto.
 Proyecto desarrollado como MiniBlog para el Proyecto Integrador Backend.

@@ -14,13 +14,18 @@ const openApiDocument = JSON.parse(
 	)
 );
 
-// Permite sobrescribir el server de Swagger cuando Railway expone una URL pública.
-// Si no existe BASE_URL, se conserva el server relativo definido en openapi.yaml.
-if (process.env.BASE_URL) {
+const port = process.env.PORT || 3000;
+const baseUrl =
+	process.env.PUBLIC_URL ||
+	process.env.BASE_URL ||
+	(process.env.RAILWAY_PUBLIC_DOMAIN ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}` : null) ||
+	`http://localhost:${port}`;
+
+if (baseUrl) {
 	if (openApiDocument?.servers?.length) {
-		openApiDocument.servers[0].url = process.env.BASE_URL;
+		openApiDocument.servers[0].url = baseUrl;
 	} else {
-		openApiDocument.servers = [{ url: process.env.BASE_URL }];
+		openApiDocument.servers = [{ url: baseUrl }];
 	}
 }
 
