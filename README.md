@@ -231,173 +231,98 @@ Si la base remota está vacía, la aplicación ejecuta automáticamente `setup.s
 
 ## Registro de uso de IA
 
-### Resumen
+Esta sección resume de forma honesta cómo usé IA durante el desarrollo. La IA me ayudó a avanzar más rápido en estructura y documentación, pero cada cambio importante lo probé manualmente antes de dejarlo definitivo.
 
-En este proyecto usé IA como apoyo para ordenar ideas, acelerar documentación, revisar estructura y detectar inconsistencias. La lógica principal, los tests y los ajustes finales fueron validados manualmente.
+### Qué tipo de ayuda me dio la IA
 
-### Fase 1-2: Setup, estructura y SQL
+- Ordenar la arquitectura inicial (rutas, controladores, servicios, middlewares).
+- Proponer borradores para el schema SQL de authors y posts.
+- Sugerir estructura de validaciones y respuestas HTTP.
+- Acelerar la documentación OpenAPI y el README.
+- Apoyar en debugging cuando Railway devolvía errores 500.
 
-#### Prompt 1: estructura inicial del proyecto
+### Ejemplos reales de prompts que utilicé
 
-**Prompt:**
+#### 1) Estructura del backend (chat)
 
-```text
-Necesito un proyecto Node.js + Express + PostgreSQL para una API REST de MiniBlog.
-Quiero una estructura clara de carpetas y una explicación breve de qué va en cada una.
-También quiero que la solución sea simple, profesional y fácil de mantener.
-```
-
-**Respuesta resumida:** Propuse una arquitectura separada por responsabilidades: rutas, controladores, servicios, middleware y configuración de base de datos. Esa idea quedó como base del proyecto.
-
-**Cómo influyó:** Ayudó a mantener el código ordenado desde el inicio y a evitar mezclar lógica HTTP con consultas SQL.
-
-#### Prompt 2: schema SQL para authors y posts
-
-**Prompt:**
+**Prompt que usé:**
 
 ```text
-Creame un schema SQL para un blog simple.
-Necesito una tabla authors y una tabla posts, con relación uno a muchos.
-Quiero email único, foreign key, ON DELETE CASCADE, índices y timestamps.
+Estoy armando el PI de MiniBlog con Node.js, Express y PostgreSQL.
+Quiero una estructura simple y prolija para no mezclar todo.
+¿Cómo me recomiendas organizar carpetas y responsabilidades para authors y posts?
 ```
 
-**Respuesta resumida:** Generó una base SQL muy cercana a la final. Luego ajusté nombres, tipos de datos y algunos detalles del esquema para alinearlo con la consigna.
+**Qué tomé de esa respuesta:** Definir claramente routes, controllers y services desde el inicio.
 
-**Cómo influyó:** Definió la estructura real de la base de datos y dejó listo el modelo relacional.
+#### 2) Base de datos y relación authors-posts (agent)
 
-### Fase 3: Conexión a PostgreSQL
-
-#### Prompt 3: módulo de conexión
-
-**Prompt:**
+**Prompt que usé:**
 
 ```text
-Necesito un módulo para conectar PostgreSQL con pg.Pool.
-Debe funcionar en local con variables sueltas y también en Railway con DATABASE_URL.
-Quiero manejo básico de errores y una estructura limpia.
+Ayúdame a construir setup.sql para dos tablas: authors y posts.
+Necesito email único en authors, foreign key en posts, ON DELETE CASCADE e índice en author_id.
 ```
 
-**Respuesta resumida:** El módulo de conexión quedó como una capa reutilizable para toda la aplicación. Después se ajustó para priorizar `DATABASE_URL` en producción y conservar el fallback local.
+**Qué tomé de esa respuesta:** El esqueleto del schema y las constraints principales. Luego ajusté columnas y probé queries manuales.
 
-**Cómo influyó:** Fue la base de toda la persistencia de datos del proyecto.
+#### 3) Conexión local + Railway (agent)
 
-### Fase 4: Endpoints CRUD
-
-#### Prompt 4: rutas para authors
-
-**Prompt:**
+**Prompt que usé:**
 
 ```text
-Genera las rutas CRUD para authors.
-Necesito GET, POST, PUT y DELETE, todas separadas y limpias.
-Cada ruta debe llamar a su controller correspondiente y mantener el código fácil de leer.
+Mi app funciona local con DB_HOST y DB_USER, pero en Railway tengo DATABASE_URL.
+Quiero que el pool use DATABASE_URL cuando exista y fallback local cuando no.
 ```
 
-**Respuesta resumida:** Generó una estructura de rutas clara y reutilizable. Luego se adaptó para incluir validaciones y una organización coherente con el resto de la API.
+**Qué tomé de esa respuesta:** La estrategia de prioridad de variables de entorno y un módulo de conexión más robusto.
 
-**Cómo influyó:** Sirvió como patrón para replicar el mismo estilo en posts.
+#### 4) Validaciones de endpoints (chat)
 
-#### Prompt 5: controllers con validaciones y errores
-
-**Prompt:**
+**Prompt que usé:**
 
 ```text
-Necesito controllers para authors y posts que validen datos básicos, llamen a services y respondan con códigos HTTP correctos.
-Si un email ya existe o un autor no se encuentra, quiero respuestas claras.
+Quiero validar authors y posts sin sobrecomplicar.
+Para authors: name obligatorio y email único.
+Para posts: title, content y author_id obligatorios.
+¿Cuál sería una forma limpia de hacerlo en middlewares?
 ```
 
-**Respuesta resumida:** Se generó un patrón base de controladores con validaciones y manejo de errores. Después lo ajusté con mensajes más específicos y reglas de negocio concretas.
+**Qué tomé de esa respuesta:** El enfoque de middlewares separados para validaciones por recurso.
 
-**Cómo influyó:** Me ayudó a estandarizar respuestas y a no repetir lógica en cada endpoint.
+#### 5) Swagger con server correcto según entorno (agent)
 
-#### Prompt 6: services con SQL parametrizado
-
-**Prompt:**
+**Prompt que usé:**
 
 ```text
-Quiero services para authors y posts que usen SQL parametrizado con pg.
-Necesito métodos para listar, buscar por id, crear, actualizar y borrar.
-La idea es que el controller no tenga SQL directo.
+En local quiero que Swagger muestre http://localhost:3000.
+En Railway quiero que muestre mi URL pública.
+¿Cómo dejo esa configuración automática sin duplicar código?
 ```
 
-**Respuesta resumida:** Se generó la capa de servicios con queries parametrizadas. Luego la afiné para devolver exactamente los campos que necesitaba la API.
+**Qué tomé de esa respuesta:** Configurar una URL base dinámica usando variables de entorno (`PUBLIC_URL`/`PORT`).
 
-**Cómo influyó:** Separó la lógica de persistencia del manejo HTTP y mejoró la mantenibilidad.
+#### 6) Debugging en producción (chat)
 
-### Fase 5: Tests
-
-#### Prompt 7: setup de pruebas
-
-**Prompt:**
+**Prompt que usé:**
 
 ```text
-Configura pruebas para una app Express con Node test y Supertest.
-Necesito cubrir las rutas principales, validar respuestas y cerrar la conexión al terminar.
+En Railway me respondía 500 con 'relation authors does not exist'.
+¿Qué revisar primero para saber si es problema de conexión o de tablas no creadas?
 ```
 
-**Respuesta resumida:** Me ayudó a armar la base de los tests y la estructura general de la suite. Después agregué los casos reales del proyecto y revisé cada respuesta manualmente.
+**Qué tomé de esa respuesta:** Validar ordenadamente: conexión, existencia de tablas y carga de seed antes de seguir depurando.
 
-**Cómo influyó:** Permitió comprobar que la API local y la remota se comportaran igual.
+### Qué hice manualmente sí o sí
 
-### Fase 6: OpenAPI y Swagger
+- Probar endpoints uno por uno en local y en Railway.
+- Ajustar mensajes de error para que fueran claros.
+- Corregir detalles de rutas y status codes.
+- Verificar que los tests pasaran completos.
+- Revisar que README y OpenAPI coincidieran con el comportamiento real de la API.
 
-#### Prompt 8: documentación OpenAPI
+### Cierre
 
-**Prompt:**
-
-```text
-Necesito un openapi.yaml para documentar toda la API.
-Quiero que incluya authors, posts, parámetros, request bodies, respuestas HTTP y un servidor de producción para Railway.
-```
-
-**Respuesta resumida:** Generó una base de documentación muy completa. Luego la ajusté para reflejar los endpoints reales, los nombres correctos y la URL pública del despliegue.
-
-**Cómo influyó:** Dejé una documentación navegable y útil tanto en local como en Railway.
-
-### Fase 7: Railway deployment
-
-#### Prompt 9: despliegue en Railway
-
-**Prompt:**
-
-```text
-Explícame cómo desplegar esta API en Railway con PostgreSQL.
-Quiero saber qué variables usar, cómo conectar la base y cómo verificar que la app quedó funcionando.
-```
-
-**Respuesta resumida:** Se fue afinando el deploy hasta lograr que la API usara `DATABASE_URL`, que Swagger mostrara la URL correcta y que la base se inicializara si estaba vacía.
-
-**Cómo influyó:** Permitió llevar al entorno productivo lo mismo que ya funcionaba localmente.
-
-### Prompts de debugging
-
-#### Prompt 10: la API responde 500 en Railway
-
-**Prompt:**
-
-```text
-Mi API en Railway responde 500 cuando consulto authors y posts.
-En local funciona, pero en producción parece que la base no tiene tablas o no está leyendo bien la conexión.
-¿Qué revisarías primero?
-```
-
-**Respuesta resumida:** Se revisó que Railway usara `DATABASE_URL`, que la base tuviera `setup.sql` aplicado y que el seed estuviera cargado. Eso explicó por qué local sí mostraba datos y Railway no.
-
-#### Prompt 11: Swagger no muestra la URL correcta
-
-**Prompt:**
-
-```text
-Swagger me abre, pero el server no me aparece bien para local y producción.
-Necesito que en localhost apunte a http://localhost:3000 y en Railway a la URL pública del deploy.
-```
-
-**Respuesta resumida:** Se ajustó la configuración del documento OpenAPI para usar una URL local por defecto y permitir la URL pública mediante `PUBLIC_URL`.
-
-### Resumen final del uso de IA
-
-- La IA fue más útil para estructura, documentación y boilerplate.
-- La lógica específica, los mensajes finales, los datos del seed y el debugging fino se revisaron manualmente.
-- El objetivo fue acelerar el trabajo sin perder control sobre el código ni sobre el deploy.
+La IA en este proyecto fue una herramienta de apoyo, no un reemplazo del desarrollo. Me ayudó a acelerar partes repetitivas, pero la integración final, la validación funcional y el deploy se resolvieron con pruebas manuales y revisión directa del código.
 
 Proyecto desarrollado como MiniBlog para el Proyecto Integrador Backend.
